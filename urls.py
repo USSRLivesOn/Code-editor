@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
 	(r'^css/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/Users/ussrliveson/Sites/editor/css'}),
 	(r'^js/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/Users/ussrliveson/Sites/editor/js'}),
+	(r'^bespin/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/Users/ussrliveson/Sites/editor/bespin'}),
 )

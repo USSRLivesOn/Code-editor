@@ -1,12 +1,16 @@
 $(document).ready(function() {
-	var embed = tiki.require("embedded");
-	var node = document.getElementById("input_area");
-	bespin = embed.useBespin(node, {
-		settings: {
-			tabstop: 4,
-			fontsize: 12
-		}
-	});
+	window.onBespinLoad = function() {
+		var edit = document.getElementById("input_area");
+		bespin.useBespin(edit).then(function(env) {
+			var editor = env.editor;
+			env.settings.set("fontsize", 12);
+			/*env.settings.set("highlightline", 1);*/
+			env.settings.set("tabstop", 4);
+			/*env.settings.set("tabmode", "tabs");*/
+		}, function (error) {
+			throw new Error("Bespin launch failed: " + error);
+		});
+	}
 	bind_filenames();
 	bind_saving();
 });
