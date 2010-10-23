@@ -4,9 +4,6 @@ $(document).ready(function() {
 		bespin.useBespin(edit).then(function(env) {
 			var editor = env.editor;
 			env.settings.set("fontsize", 12);
-			/*env.settings.set("highlightline", 1);*/
-			env.settings.set("tabstop", 4);
-			/*env.settings.set("tabmode", "tabs");*/
 		}, function (error) {
 			throw new Error("Bespin launch failed: " + error);
 		});

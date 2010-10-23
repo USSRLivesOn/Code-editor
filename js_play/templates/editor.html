@@ -1,55 +1,9 @@
 {% extends "js_play/templates/wrapper.html" %}
+{% load file_drawer %}
 
 {% block content %}
 	<div id="file_drawer">
-		<ul id="file_drawer_top_ul">
-			{% for d in dir_structure.dirs %}
-				<li>
-					{{ d }}
-						<ul>
-							{% for dy in d %}
-								<li>
-									{{ dy }}
-								
-								</li>
-							{% endfor %}
-						</ul>
-					{% if d.files %}
-						<ul>
-							{% for file in d.files %}
-								<li{% if file.hidden %} class="hidden"{% endif %}>
-									<a class="file_name" href="#{{ file.full_path }}">{{ file.name }}</a>
-								</li>
-							{% endfor %}
-						</ul>
-					{% endif %}
-				</li>
-			{% endfor %}
-			{% if dir_structure.files %}
-				<ul>
-					{% for file in d.files %}
-						<li{% if file.hidden %} class="hidden"{% endif %}>
-							<a class="file_name" href="#{{ file.full_path }}">{{ file.name }}</a>
-						</li>
-					{% endfor %}
-				</ul>
-			{% endif %}
-
-			{% comment %}
-			{% for dir in dir_structure %}
-				<li>
-					{{ dir.path }}
-					<ul>
-						{% for file in dir.files %}
-							<li{% if file.hidden %} class="hidden"{% endif %}>
-								<a class="file_name" href="#{{ dir.path }}/{{ file.name }}">{{ file.name }}</a>
-							</li>
-						{% endfor %}
-					</ul>
-				</li>
-			{% endfor %}
-			{% endcomment %}
-		</ul>
+		{{ dir_structure|render_drawer }}
 	</div>
 	<div id="inputdiv_wrapper">
 		<div id="input_area">{{ file_contents|safe }}</div>

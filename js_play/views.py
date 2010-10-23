@@ -14,37 +14,50 @@ def index (request):
 
 
 def get_dir_structure (current_dir):
+	exclude_dot_dirs = True
+	exclude_dot_files = True
+	excluded_dirs = ['bespin']
+	excluded_extensions = ['', '.pyc']
+	
 	walk_results = []
 	for root, dirs, filenames in os.walk(current_dir):
+		for directory in dirs[:]: # iterate over a copy to avoid skipping items after removal
+			if directory in excluded_dirs or (exclude_dot_dirs == True and len(directory) >= 1 and directory[0] == '.'):
+				dirs.remove(directory)
 		files = []
-		for f in filenames:
-			(filename, extension) = os.path.splitext(f)
-			if filename[0] == '.' or extension[1:] == 'pyc':
-				hidden = True
-			else:
-				hidden = False
-			files.append({'name': f, 'hidden': hidden, 'full_path': root[len(current_dir):] + f})
-		if root[len(current_dir) + 1:len(current_dir) + 4] != '.hg':
-			walk_results.append({'path': root[len(current_dir)+1:], 'dirs': dirs, 'files': files})
-	
+		for filename in filenames:
+			(name, ext) = os.path.splitext(filename)
+			if ext not in excluded_extensions and not (exclude_dot_files == True and len(name) >= 1 and name[0] == '.'):
+				filepath = os.path.join(root[len(current_dir):], filename)
+				files.append({'name': filename, 'path': filepath})
+		walk_results.append({'path': root[len(current_dir) + 1:], 'dirs': dirs, 'files': files})
+
+	pp = pprint.PrettyPrinter(indent = 0)
+	pp.pprint(walk_results)
+
 	dir_structure = {}
-	for item in walk_results:
+	for result in walk_results:
 		target_path = dir_structure
-		if item['path'] != '':
-			path_parts = item['path'].split('/')
+		if len(result['path']) > 0:
+			path_parts = result['path'].split('/')
 			for part in path_parts:
-				if part not in target_path['dirs']:
-					target_path['dirs'][part] = {}
-				target_path = target_path['dirs'][part]
-		if len(item['dirs']) > 0:
-			target_path['dirs'] = {}
-			for dir_name in item['dirs']:
-				target_path['dirs'][dir_name] = {}
-		target_path['files'] = item['files']
-	
-	pp = pprint.PrettyPrinter(indent=4)
+				if part not in target_path['dirdata']:
+					target_path['dirdata'] = {}
+					target_path['dirdata'][part] = {}
+					target_path['dirdata'][part]['name'] = part
+					target_path['dirdata'][part]['contents'] = {}
+				target_path = target_path['dirdata'][part]['contents']
+		if len(result['dirs']) > 0:
+			target_path['dirnames'] = result['dirs']
+			for dir_name in result['dirs']:
+				target_path['dirdata'] = {}
+				target_path['dirdata'][dir_name] = {}
+				target_path['dirdata'][dir_name]['name'] = dir_name
+				target_path['dirdata'][dir_name]['contents'] = {}
+		target_path['files'] = result['files']
+
 	pp.pprint(dir_structure)
-	#dir_structure = walk_results
+	dir_structure = walk_results
 	return dir_structure
 
 
