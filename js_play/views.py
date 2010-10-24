@@ -1,6 +1,7 @@
 import os, pprint
 from django.template.defaultfilters import force_escape
-from django.shortcuts import render_to_response
+#from django.shortcuts import render_to_response
+from djangomako.shortcuts import render_to_response, render_to_string
 
 
 def index (request):
@@ -17,7 +18,7 @@ def get_dir_structure (current_dir):
 	exclude_dot_dirs = True
 	exclude_dot_files = True
 	excluded_dirs = ['bespin']
-	excluded_extensions = ['', '.pyc']
+	excluded_extensions = ['.pyc']
 	
 	walk_results = []
 	for root, dirs, filenames in os.walk(current_dir):
@@ -32,8 +33,8 @@ def get_dir_structure (current_dir):
 				files.append({'name': filename, 'path': filepath})
 		walk_results.append({'path': root[len(current_dir) + 1:], 'dirs': dirs, 'files': files})
 
-	pp = pprint.PrettyPrinter(indent = 0)
-	pp.pprint(walk_results)
+	#pp = pprint.PrettyPrinter(indent = 0)
+	#pp.pprint(walk_results)
 
 	dir_structure = {}
 	for result in walk_results:
@@ -41,23 +42,20 @@ def get_dir_structure (current_dir):
 		if len(result['path']) > 0:
 			path_parts = result['path'].split('/')
 			for part in path_parts:
-				if part not in target_path['dirdata']:
-					target_path['dirdata'] = {}
-					target_path['dirdata'][part] = {}
-					target_path['dirdata'][part]['name'] = part
-					target_path['dirdata'][part]['contents'] = {}
-				target_path = target_path['dirdata'][part]['contents']
+				if part not in target_path['dirs']:
+					if 'dirs' not in target_path:
+						target_path['dirs'] = {}
+					target_path['dirs'][part] = {'name': part, 'contents': {}}
+				target_path = target_path['dirs'][part]['contents']
 		if len(result['dirs']) > 0:
 			target_path['dirnames'] = result['dirs']
 			for dir_name in result['dirs']:
-				target_path['dirdata'] = {}
-				target_path['dirdata'][dir_name] = {}
-				target_path['dirdata'][dir_name]['name'] = dir_name
-				target_path['dirdata'][dir_name]['contents'] = {}
+				if 'dirs' not in target_path:
+					target_path['dirs'] = {}
+				target_path['dirs'][dir_name] = {'name': dir_name, 'contents': {}}
 		target_path['files'] = result['files']
 
-	pp.pprint(dir_structure)
-	dir_structure = walk_results
+	#pp.pprint(dir_structure)
 	return dir_structure
 
 

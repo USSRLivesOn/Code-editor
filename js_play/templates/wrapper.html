@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title>{% block title %}Testing editor{% endblock %}</title>
+	<title>${ self.page_title() }<%def name="page_title()">Test title</%def></title>
 	<link rel="stylesheet" type="text/css" href="/css/styles.css" />
 	<link rel="stylesheet" type="text/css" href="/css/BespinEmbedded.compressed.css" />
 <head>
 <body>
-	{% block content %}{% endblock %}
+	${ self.body() }
 
 	<link id="bespin_base" href="/bespin" />
 	<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAADSkF-vV5lZYCx8FeN2f86BRi_j0U6kJrkFvY4-OX2XYmEAa76BQfa4YnWciC_7BSDZQq8gEPDkZDVA"></script>

@@ -1,9 +1,10 @@
-{% extends "js_play/templates/wrapper.html" %}
-{% load file_drawer %}
+<%inherit file="wrapper.html"/>
 
-{% block content %}
+<%def name="body()">
 	<div id="file_drawer">
-		{{ dir_structure|render_drawer }}
+		<ul>
+			${ self.print_folder(dir_structure) }
+		</ul>
 	</div>
 	<div id="inputdiv_wrapper">
 		<div id="input_area">{{ file_contents|safe }}</div>
@@ -12,4 +13,29 @@
 		<a class="button" id="save_current" href="#">Save</a>
 	<div>
 	<div id="current_filepath">{{ file_path|safe }}</div>
-{% endblock %}
+</%def>
+
+<%def name="print_folder(dir_structure)">
+	% if 'dirs' in dir_structure:
+		% for dirname, dirdata in dir_structure['dirs'].items():
+			<%
+				#import pprint
+				#pp = pprint.PrettyPrinter(indent = 0)
+				#pp.pprint(dirdata)
+			%>
+			<li class="dir">
+				${ dirname }
+				<ul>
+					% if len(dirdata['contents']) > 0:
+						${ self.print_folder(dirdata['contents']) }
+						% endif
+				</ul>
+			</li>
+		% endfor
+	% endif
+	% if 'files' in dir_structure:	
+		% for file in dir_structure['files']:
+			<li class="file">${ file['name'] }</li>
+		% endfor
+	% endif
+</%def>
