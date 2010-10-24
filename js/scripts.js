@@ -1,9 +1,11 @@
+global_env = [];
+
 $(document).ready(function() {
 	window.onBespinLoad = function() {
 		var edit = document.getElementById("input_area");
-		bespin.useBespin(edit).then(function(env) {
-			var editor = env.editor;
+		bespin.useBespin(edit).then(function(env) { /* https://bespin.mozillalabs.com/docs/releases/notes08.html */
 			env.settings.set("fontsize", 12);
+			global_env = env; /* workaround, because retrieving env with require('environment').env (https://bespin.mozillalabs.com/docs/releases/notes09.html) doesn't work */
 		}, function (error) {
 			throw new Error("Bespin launch failed: " + error);
 		});
@@ -13,7 +15,7 @@ $(document).ready(function() {
 });
 
 function bind_filenames() {
-	$('.file_name').click(function(e) {
+	$('#file_drawer li.file a.file').click(function(e) {
 		e.preventDefault();
 		var file_path = $(this).attr('href').replace(/(.*)#/, '');
 		$.ajax({
@@ -23,7 +25,11 @@ function bind_filenames() {
 			dataType: 'text',
 			cache: false,
 			success: function(result) {
-				bespin.setValue(result);
+				var env = global_env;
+				var editor = env.editor;
+				console.log(editor.syntax);
+				editor.value = result;
+				editor.syntax = 'python';
 				$('#current_filepath').html(file_path);
 			}
 		});

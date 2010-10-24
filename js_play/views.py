@@ -5,11 +5,11 @@ from djangomako.shortcuts import render_to_response, render_to_string
 
 
 def index (request):
+	starting_file = 'js_play/views.py' # temp default
 	current_dir = get_current_dir()
-	topdir_name = current_dir[current_dir.rfind('/') + 1:]
-	starting_file = '/js_play/views.py' # temp default
+	#topdir_name = current_dir[current_dir.rfind(os.sep) + 1:]
 	dir_structure = get_dir_structure(current_dir)
-	f_contents = get_file_contents(current_dir + starting_file)
+	f_contents = get_file_contents(current_dir + os.sep + starting_file)
 	return render_to_response('js_play/templates/editor.html',
 		{'dir_structure': dir_structure, 'file_contents': f_contents, 'file_path': starting_file})
 
@@ -40,7 +40,7 @@ def get_dir_structure (current_dir):
 	for result in walk_results:
 		target_path = dir_structure
 		if len(result['path']) > 0:
-			path_parts = result['path'].split('/')
+			path_parts = result['path'].split(os.sep)
 			for part in path_parts:
 				if part not in target_path['dirs']:
 					if 'dirs' not in target_path:
@@ -59,7 +59,9 @@ def get_dir_structure (current_dir):
 	return dir_structure
 
 
+# requires full file path, not relative
 def get_file_contents (full_file_path):
+	#print 'attempting to retrieve ' + full_file_path
 	with open(full_file_path, 'r') as f:
 		f_contents = f.read()
 		f_contents = raw_to_html(f_contents)
@@ -85,14 +87,14 @@ def ajax_save_file (request):
 	if request.method == 'POST':
 		file_contents = request.POST['file_contents']
 		file_path = request.POST['file_path']
-		save_file_contents(get_current_dir() + file_path, file_contents)
+		save_file_contents(get_current_dir() + os.sep + file_path, file_contents)
 	return render_to_response('js_play/templates/ajax.html', {'output': ''})
 
 
 def ajax_get_file (request):
 	file_path = request.GET['file_path']
-	file_contents = get_file_contents(get_current_dir() + file_path)
-	return render_to_response('js_play/templates/ajax_safe.html', {'output': file_contents})
+	file_contents = get_file_contents(get_current_dir() + os.sep + file_path)
+	return render_to_response('js_play/templates/ajax.html', {'output': file_contents})
 
 
 def raw_to_html (raw):

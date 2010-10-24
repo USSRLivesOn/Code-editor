@@ -3,3 +3,4 @@
 *.pyc
 *.tmproj
 .hg
+.sass-cache

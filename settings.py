@@ -73,7 +73,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-	'djangomako.middleware.MakoMiddleware'
+	'djangomako.middleware.MakoMiddleware' # http://github.com/tuxdna/django-mako or http://code.google.com/p/django-mako/
 )
 
 ROOT_URLCONF = 'editor.urls'
@@ -89,6 +89,5 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.admin',
-	'django.contrib.admindocs',
-	'editor.js_play',
+	'django.contrib.admindocs'
 )
