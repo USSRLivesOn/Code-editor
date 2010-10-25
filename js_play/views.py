@@ -48,7 +48,7 @@ def get_dir_structure (current_dir):
 					target_path['dirs'][part] = {'name': part, 'contents': {}}
 				target_path = target_path['dirs'][part]['contents']
 		if len(result['dirs']) > 0:
-			target_path['dirnames'] = result['dirs']
+			target_path['dirnames'] = result['dirs'].sort()
 			for dir_name in result['dirs']:
 				if 'dirs' not in target_path:
 					target_path['dirs'] = {}
