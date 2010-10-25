@@ -33,7 +33,7 @@ def get_dir_structure (current_dir):
 				files.append({'name': filename, 'path': filepath})
 		walk_results.append({'path': root[len(current_dir) + 1:], 'dirs': dirs, 'files': files})
 
-	pp = pprint.PrettyPrinter(indent = 0)
+	#pp = pprint.PrettyPrinter(indent = 0)
 	#pp.pprint(walk_results)
 
 	dir_structure = {'files': [], 'dirs': []}
@@ -50,7 +50,7 @@ def get_dir_structure (current_dir):
 			if len(target_path[i]) > 1:
 				target_path[i].sort(key = lambda x: x['name'])
 
-	pp.pprint(dir_structure)
+	#pp.pprint(dir_structure)
 	return dir_structure
 
 
@@ -74,6 +74,7 @@ def save_file_contents (full_file_path, contents):
 		# delete old file
 		f.write(contents)
 		f.close()
+		#print 'would have saved stuff in ' + full_file_path
 	except:
 		print 'some error occurred...'
 
@@ -82,13 +83,13 @@ def ajax_save_file (request):
 	if request.method == 'POST':
 		file_contents = request.POST['file_contents']
 		file_path = request.POST['file_path']
-		save_file_contents(get_current_dir() + os.sep + file_path, file_contents)
+		save_file_contents(get_current_dir() + file_path, file_contents)
 	return render_to_response('js_play/templates/ajax.html', {'output': ''})
 
 
 def ajax_get_file (request):
 	file_path = request.GET['file_path']
-	file_contents = get_file_contents(get_current_dir() + os.sep + file_path)
+	file_contents = get_file_contents(get_current_dir() + file_path)
 	return render_to_response('js_play/templates/ajax.html', {'output': file_contents})
 
 
