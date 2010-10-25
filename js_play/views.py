@@ -36,23 +36,15 @@ def get_dir_structure (current_dir):
 	#pp = pprint.PrettyPrinter(indent = 0)
 	#pp.pprint(walk_results)
 
-	dir_structure = {}
+	dir_structure = {'files': [], 'dirs': [], 'dirs_list': []}
 	for result in walk_results:
 		target_path = dir_structure
-		if len(result['path']) > 0:
+		if result['path'] != '':
 			path_parts = result['path'].split(os.sep)
 			for part in path_parts:
-				if part not in target_path['dirs']:
-					if 'dirs' not in target_path:
-						target_path['dirs'] = {}
-					target_path['dirs'][part] = {'name': part, 'contents': {}}
-				target_path = target_path['dirs'][part]['contents']
-		if len(result['dirs']) > 0:
-			target_path['dirnames'] = result['dirs'].sort()
-			for dir_name in result['dirs']:
-				if 'dirs' not in target_path:
-					target_path['dirs'] = {}
-				target_path['dirs'][dir_name] = {'name': dir_name, 'contents': {}}
+				if part not in [dir['name'] for dir in target_path['dirs']]:
+					target_path['dirs'].append({'name': part, 'contents': {'files': [], 'dirs': [], 'dirs_list': []}})
+				target_path = target_path['dirs'][-1]['contents']
 		target_path['files'] = result['files']
 
 	#pp.pprint(dir_structure)

@@ -15,9 +15,9 @@
 
 <%def name="print_folder(dir_structure)">
 	% if 'dirs' in dir_structure:
-		% for dirname, dirdata in dir_structure['dirs'].items():
+		% for dirdata in dir_structure['dirs']:
 			<li>
-				<span class="dirname">${ dirname }</span>
+				<span class="dirname">${ dirdata['name'] }</span>
 				<ul>
 					% if len(dirdata['contents']) > 0:
 						${ self.print_folder(dirdata['contents']) }
