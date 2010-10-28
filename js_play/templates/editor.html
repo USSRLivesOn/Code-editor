@@ -6,7 +6,7 @@
 	</ul>
 </div>
 <div id="inputdiv_wrapper">
-	<div id="input_area">${ file_contents | n, unicode }</div>
+	<div id="input_area" contenteditable="true" spellcheck="false">${ file_contents | h }</div>
 </div>
 <div id="bottombar">
 	<a class="button" id="save_current" href="#">Save</a>

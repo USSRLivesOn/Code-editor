@@ -94,12 +94,14 @@ def ajax_get_file (request):
 
 
 def raw_to_html (raw):
-	raw = raw.replace('\t', ' '*4)
+	#raw = '<div>' + raw + '</div><p><br/></p>'
+	#raw = raw.replace('\n', '<br/></div><div>')
+	#raw = raw.replace('\t', ' '*4)
 	return raw
 
 
 def html_to_raw (html):
-	html = html.replace(' '*4, '\t')
+	#html = html.replace(' '*4, '\t')
 	return html
 
 
