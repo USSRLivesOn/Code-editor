@@ -120,7 +120,7 @@ a {
 #input_area {
 	width: 100%;
 	height: 100%;
-	white-space: pre;
+	white-space: pre; /* or use "pre" if we want to wrap without breaking code */
 	-webkit-nbsp-mode: space; /* treat as regular spaces (ok to break lines) */
 	user-modify: read-write;
 	-moz-user-modify: read-write; /* supposedly doesn't work */
@@ -129,7 +129,7 @@ a {
 	font-size: 12px;
 	font-family: "Inconsolata", "Consolas", "Monaco", "Andale Mono", Courier, Arial;
 	line-height: 1.5em;
-	overflow: scroll;
+	overflow: auto;
 }
 
 #bottombar {

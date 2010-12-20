@@ -1,25 +1,11 @@
 global_env = [];
 
 $(document).ready(function() {
-	window.onBespinLoad = function() {
-		var edit = document.getElementById("input_area");
-		bespin.useBespin(edit).then(function(env) { /* https://bespin.mozillalabs.com/docs/releases/notes08.html */
-			env.settings.set("fontsize", 12);
-			var editor = env.editor;
-			set_editor_to_defaults(editor);
-			global_env = env; /* workaround, because retrieving env with require('environment').env (https://bespin.mozillalabs.com/docs/releases/notes09.html) doesn't work */
-		}, function (error) {
-			throw new Error("Bespin launch failed: " + error);
-		});
-	}
 	bind_filenames();
+	rangy.init();
+	bind_keyboard();
 	bind_saving();
 });
-
-function set_editor_to_defaults(editor) {
-	editor.focus = true;
-	editor.setLineNumber(0);
-}
 
 function bind_filenames() {
 	$('#file_drawer a.file').click(function() {
@@ -31,9 +17,7 @@ function bind_filenames() {
 			dataType: 'text',
 			cache: false,
 			success: function(result) {
-				var editor = global_env.editor;
-				editor.value = result;
-				set_editor_to_defaults(editor);
+				$("#input_area").html(result + "<p><br/></p>");
 				$('#current_filepath').html(file_path);
 			}
 		});
@@ -44,8 +28,8 @@ function bind_filenames() {
 function bind_saving() {
 	$('#save_current').click(function () {
 		var file_path = $('#current_filepath').html()
-		var editor = global_env.editor;
-		var file_contents = editor.value;
+		var file_contents = $("#input_area").html();
+		file_contents =  file_contents.substring(file_contents.length - 12); /* strip the "<p><br/></p>" from the end */
 		$.ajax({
 			type: 'POST',
 			url: '/editor/ajax_save_file/',
@@ -54,5 +38,23 @@ function bind_saving() {
 			success: function(request, status_text) {}
 		});
 		return false;
+	});
+}
+
+function bind_keyboard() {
+	$(document).keydown(function (e) {
+		if (e.keyCode == 9) { /* tab */
+			var newNode = document.createTextNode("\t");
+			var sel = rangy.getSelection();
+			var range = sel.getRangeAt(0);
+			range.insertNode(newNode);
+			return false;
+		} else if (e.keyCode == 13) { /* enter */
+			var newNode = document.createTextNode("\n");
+			var sel = rangy.getSelection();
+			var range = sel.getRangeAt(0);
+			range.insertNode(newNode);
+			return false;
+		}
 	});
 }

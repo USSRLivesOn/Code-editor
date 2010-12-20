@@ -94,15 +94,15 @@ def ajax_get_file (request):
 
 
 def raw_to_html (raw):
-	#raw = '<div>' + raw + '</div><p><br/></p>'
-	#raw = raw.replace('\n', '<br/></div><div>')
-	#raw = raw.replace('\t', ' '*4)
-	return raw
+	''' Replicate effects of mako's html escaping with markupsafe.escape() '''
+	html = raw.replace('&', '&amp;').replace('>', '&gt;').replace('<', '&lt;').replace("'", '&#39;').replace('"', '&#34;')
+	return html
 
 
 def html_to_raw (html):
-	#html = html.replace(' '*4, '\t')
-	return html
+	''' Reverse effects of mako's html escaping with markupsafe.escape() '''
+	raw = html.replace('&amp;', '&').replace('&gt;', '>').replace('&lt;', '<').replace('&#39;', "'").replace('&#34;', '"')
+	return raw
 
 
 def get_current_dir ():
