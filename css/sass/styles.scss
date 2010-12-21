@@ -130,6 +130,22 @@ a {
 	font-family: "Inconsolata", "Consolas", "Monaco", "Andale Mono", Courier, Arial;
 	line-height: 1.5em;
 	overflow: auto;
+	#hack {
+		display: block;
+		width: 0;
+		height: 0;
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		/*
+		br {
+			display: block;
+			width: 0;
+			height: 0;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+		}
+		*/
+	}
 }
 
 #bottombar {

@@ -1,5 +1,7 @@
 global_env = [];
 
+const HACK = '<p id="hack"><br></p>';
+
 $(document).ready(function() {
 	bind_filenames();
 	rangy.init();
@@ -17,7 +19,7 @@ function bind_filenames() {
 			dataType: 'text',
 			cache: false,
 			success: function(result) {
-				$("#input_area").html(result + "<p><br/></p>");
+				$("#input_area").html(result + HACK);
 				$('#current_filepath').html(file_path);
 			}
 		});
@@ -29,7 +31,13 @@ function bind_saving() {
 	$('#save_current').click(function () {
 		var file_path = $('#current_filepath').html()
 		var file_contents = $("#input_area").html();
-		file_contents =  file_contents.substring(file_contents.length - 12); /* strip the "<p><br/></p>" from the end */
+		console.log("before:\n" + file_contents);
+		file_contents = file_contents.replace(HACK, '');
+		if (file_contents.substr(0, 5) === '<div>') { // don't add a space for the div at the beginning of the file
+			file_contents = file_contents.substring(5);
+		}
+		file_contents = file_contents.replace(/<div>/gi, "\n").replace(/<\/div>/gi, '').replace(/<br>/gi, '');
+		console.log("after:\n" + file_contents);
 		$.ajax({
 			type: 'POST',
 			url: '/editor/ajax_save_file/',
@@ -37,24 +45,37 @@ function bind_saving() {
 			cache: false,
 			success: function(request, status_text) {}
 		});
+		check_endinput_hack();
 		return false;
 	});
 }
 
 function bind_keyboard() {
 	$(document).keydown(function (e) {
-		if (e.keyCode == 9) { /* tab */
+		//var sel = rangy.getSelection();
+		//console.log("anchor: (" + sel.anchorNode + "," + sel.anchorOffset + "); focus: (" + sel.focusNode + "," + sel.focusOffset + ")");
+		if (e.keyCode === 9) { // tab
 			var newNode = document.createTextNode("\t");
 			var sel = rangy.getSelection();
 			var range = sel.getRangeAt(0);
 			range.insertNode(newNode);
+			sel = rangy.getSelection();
+			if (typeof(sel.anchorNode.nextSibling) !== 'undefined' && sel.anchorNode.nextSibling !== null && sel.anchorNode.nextSibling.nodeType === 3) {
+				sel.collapse(sel.anchorNode.nextSibling, 1);
+			}
+			check_endinput_hack();
 			return false;
-		} else if (e.keyCode == 13) { /* enter */
-			var newNode = document.createTextNode("\n");
-			var sel = rangy.getSelection();
-			var range = sel.getRangeAt(0);
-			range.insertNode(newNode);
-			return false;
-		}
+		} else if (e.keyCode === 8) { // backspace
+			check_endinput_hack();
+			console.log('checked');
+			}
 	});
+}
+
+function check_endinput_hack () {
+	var input_area = $("#input_area");
+	if (input_area.html().indexOf(HACK) === -1) {
+		input_area.append(HACK);
+		console.log('fixed');
+	}
 }
