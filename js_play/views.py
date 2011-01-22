@@ -8,8 +8,10 @@ def index (request):
 	starting_file = 'js_play/views.py' # temp default
 	current_dir = get_current_dir()
 	#topdir_name = current_dir[current_dir.rfind(os.sep) + 1:]
-	dir_structure = get_dir_structure(current_dir)
-	f_contents = get_file_contents(current_dir + os.sep + starting_file)
+	dir_structure = {'files': [], 'dirs': []}
+	#dir_structure = get_dir_structure(current_dir)
+	f_contents = ''
+	#f_contents = get_file_contents(current_dir + os.sep + starting_file)
 	return render_to_response('js_play/templates/editor.html',
 		{'dir_structure': dir_structure, 'file_contents': f_contents, 'file_path': starting_file})
 
@@ -106,4 +108,5 @@ def html_to_raw (html):
 
 
 def get_current_dir ():
-	return os.getcwd()
+	return os.path.realpath(os.path.dirname(sys.argv[0]))
+	# return os.getcwd()
