@@ -67,13 +67,13 @@ function bind_keyboard() {
 			return false;
 		} else if (e.keyCode === 8) { // backspace
 			check_endinput_hack();
-			console.log('checked');
 			}
 	});
 }
 
 function check_endinput_hack () {
 	var input_area = $("#input_area");
+	console.log('checked');
 	if (input_area.html().indexOf(HACK) === -1) {
 		input_area.append(HACK);
 		console.log('fixed');
