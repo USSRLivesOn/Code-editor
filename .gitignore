@@ -4,4 +4,4 @@
 *.tmproj
 .hg
 .sass-cache
-settings.py
+settings_host.py

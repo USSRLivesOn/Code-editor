@@ -108,5 +108,6 @@ def html_to_raw (html):
 
 
 def get_current_dir ():
-	return os.path.realpath(os.path.dirname(sys.argv[0]))
+	from django.conf import settings #for PWD setting
+	return settings.EDITOR_PWD
 	# return os.getcwd()
