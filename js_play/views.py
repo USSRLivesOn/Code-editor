@@ -8,10 +8,8 @@ def index (request):
 	starting_file = 'js_play/views.py' # temp default
 	current_dir = get_current_dir()
 	#topdir_name = current_dir[current_dir.rfind(os.sep) + 1:]
-	dir_structure = {'files': [], 'dirs': []}
-	#dir_structure = get_dir_structure(current_dir)
-	f_contents = ''
-	#f_contents = get_file_contents(current_dir + os.sep + starting_file)
+	dir_structure = get_dir_structure(current_dir)
+	f_contents = get_file_contents(current_dir + os.sep + starting_file)
 	return render_to_response('js_play/templates/editor.html',
 		{'dir_structure': dir_structure, 'file_contents': f_contents, 'file_path': starting_file})
 
@@ -19,7 +17,7 @@ def index (request):
 def get_dir_structure (current_dir):
 	exclude_dot_dirs = True
 	exclude_dot_files = True
-	excluded_dirs = ['bespin']
+	excluded_dirs = ['']
 	excluded_extensions = ['.pyc']
 	
 	walk_results = []
@@ -33,10 +31,10 @@ def get_dir_structure (current_dir):
 			if ext not in excluded_extensions and not (exclude_dot_files == True and len(name) >= 1 and name[0] == '.'):
 				filepath = os.path.join(root[len(current_dir):], filename)
 				files.append({'name': filename, 'path': filepath})
-		walk_results.append({'path': root[len(current_dir) + 1:], 'dirs': dirs, 'files': files})
+		walk_results.append({'path': root[len(current_dir):], 'dirs': dirs, 'files': files})
 
-	#pp = pprint.PrettyPrinter(indent = 0)
-	#pp.pprint(walk_results)
+	pp = pprint.PrettyPrinter(indent = 0)
+	pp.pprint(walk_results)
 
 	dir_structure = {'files': [], 'dirs': []}
 	for result in walk_results:

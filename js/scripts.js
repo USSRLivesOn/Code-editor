@@ -14,7 +14,7 @@ function bind_filenames() {
 		var file_path = $(this).attr('href').replace(/(.*)#/, '');
 		$.ajax({
 			type: 'GET',
-			url: '/editor/ajax_get_file/',
+			url: '/ajax_get_file/',
 			data: {'file_path': file_path},
 			dataType: 'text',
 			cache: false,
@@ -31,16 +31,16 @@ function bind_saving() {
 	$('#save_current').click(function () {
 		var file_path = $('#current_filepath').html()
 		var file_contents = $("#input_area").html();
-		console.log("before:\n" + file_contents);
+		//console.log("before:\n" + file_contents);
 		file_contents = file_contents.replace(HACK, '');
 		if (file_contents.substr(0, 5) === '<div>') { // don't add a space for the div at the beginning of the file
 			file_contents = file_contents.substring(5);
 		}
 		file_contents = file_contents.replace(/<div>/gi, "\n").replace(/<\/div>/gi, '').replace(/<br>/gi, '');
-		console.log("after:\n" + file_contents);
+		//console.log("after:\n" + file_contents);
 		$.ajax({
 			type: 'POST',
-			url: '/editor/ajax_save_file/',
+			url: '/ajax_save_file/',
 			data: {'file_path': file_path, 'file_contents': file_contents},
 			cache: false,
 			success: function(request, status_text) {}
@@ -73,9 +73,9 @@ function bind_keyboard() {
 
 function check_endinput_hack () {
 	var input_area = $("#input_area");
-	console.log('checked');
+	//console.log('checked');
 	if (input_area.html().indexOf(HACK) === -1) {
 		input_area.append(HACK);
-		console.log('fixed');
+		//console.log('fixed');
 	}
 }
