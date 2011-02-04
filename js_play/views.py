@@ -20,14 +20,17 @@ def index (request, view_type):
 		{'dir_structure': dir_structure, 'file_contents': f_contents, 'file_path': starting_file})
 
 
+# TODO: make environment-agnostic (local vs. remote)
 def ajax_save_file (request):
 	if request.method == 'POST':
 		file_contents = request.POST['file_contents']
 		file_path = request.POST['file_path']
+		# validate here
 		save_file_contents(get_current_dir() + file_path, file_contents)
 	return render_to_response('js_play/templates/ajax.html', {'output': ''})
 
 
+# TODO: make environment-agnostic (local vs. remote)
 def ajax_get_file (request):
 	file_path = request.GET['file_path']
 	# validate here

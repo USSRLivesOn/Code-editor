@@ -6,6 +6,11 @@ from fabric.api import * #env, settings, cd, local, run
 class Directory:
 	''' Abstract class '''
 
+	exclude_dot_dirs = True
+	exclude_dot_files = True # not yet implemented for remote
+	excluded_dirs = ['images'] # not yet implemented for remote
+	excluded_extensions = ['pyc']
+
 	def parse_walk_results (self, walk_results):
 		dir_structure = {'files': [], 'dirs': []}
 		for result in walk_results:
@@ -44,22 +49,17 @@ class RemoteDirectory(Directory):
 				ls_output = run("ls -%s" % ls_options)
 		ls_output = ls_output.splitlines()
 
-		exclude_dot_dirs = True
-		exclude_dot_files = True # not implemented yet
-		excluded_dirs = [''] # not implemented yet
-		excluded_extensions = ['pyc']
-
 		# this code could probably be cleaned up quite a bit
 		filtered_ls_output = []
 		exclude_flag = False
 		for line in ls_output:
-			if exclude_dot_dirs and re.search(r"^\./\..*:$", line) != None: # dot directory
+			if self.exclude_dot_dirs and re.search(r"^\./\..*:$", line) != None: # dot directory
 				exclude_flag = True
 			elif exclude_flag == True and re.search(r"^\..*:$", line) != None: # non-dot directory
 				exclude_flag = False
 			if exclude_flag == False:
-				extension_regex = '\.' + '|\.'.join(excluded_extensions)
-				if line != '' and (len(excluded_extensions) == 0 or re.search(r".*(%s){1}$" % extension_regex, line)) == None:
+				extension_regex = '\.' + '|\.'.join(self.excluded_extensions)
+				if line != '' and (len(self.excluded_extensions) == 0 or re.search(r".*(%s){1}$" % extension_regex, line)) == None:
 					filtered_ls_output.append(line)
 		
 		walk_results = []
@@ -72,7 +72,7 @@ class RemoteDirectory(Directory):
 			elif i[-1] == '/':
 				current_set['dirs'].append(i[:-1])
 			else:
-				current_set['files'].append({'name': i, 'path': current_path + '/' + i})
+				current_set['files'].append({'name': i, 'ext': i.rsplit('.', 1)[-1], 'path': current_path + '/' + i})
 		walk_results.append(current_set)
 
 		#pp.pprint(walk_results)
@@ -91,23 +91,19 @@ class LocalDirectory(Directory):
 		return settings.EDITOR_PWD
 		# return os.getcwd()
 
-	def get_dir_structure (self, current_dir):
-		exclude_dot_dirs = True
-		exclude_dot_files = True
-		excluded_dirs = ['']
-		excluded_extensions = ['.pyc']
-		
+	def get_dir_structure (self, current_dir):		
 		walk_results = []
 		for root, dirs, filenames in os.walk(current_dir):
 			for directory in dirs[:]: # iterate over a copy to avoid skipping items after removal
-				if directory in excluded_dirs or (exclude_dot_dirs == True and len(directory) >= 1 and directory[0] == '.'):
+				if directory in self.excluded_dirs or (self.exclude_dot_dirs == True and len(directory) >= 1 and directory[0] == '.'):
 					dirs.remove(directory)
 			files = []
 			for filename in filenames:
 				(name, ext) = os.path.splitext(filename)
-				if ext not in excluded_extensions and not (exclude_dot_files == True and len(name) >= 1 and name[0] == '.'):
+				ext = ext[1:]
+				if ext not in self.excluded_extensions and not (self.exclude_dot_files == True and len(name) >= 1 and name[0] == '.'):
 					filepath = os.path.join(root[len(current_dir):], filename)
-					files.append({'name': filename, 'path': filepath})
+					files.append({'name': filename, 'ext': ext, 'path': filepath})
 			walk_results.append({'path': root[len(current_dir):], 'dirs': dirs, 'files': files})
 		#pp.pprint(walk_results)
 

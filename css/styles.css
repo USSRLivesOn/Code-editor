@@ -74,19 +74,19 @@ a {
   overflow: hidden;
   font-size: 11px; }
   #file_drawer ul {
-    padding: 0 0 0 25px; }
+    padding: 2px 0 2px 20px; }
   #file_drawer li {
     list-style: none; }
     #file_drawer li .hidden {
       display: none; }
     #file_drawer li .dirname {
       display: block;
-      padding: 3px 0;
-      margin: 5px 0 0;
-      background-color: #eee; }
+      padding: 3px 0 3px 19px;
+      background: url(/images/icons_famfamfam/folder.png) 0 0 no-repeat; }
   #file_drawer a {
     display: block;
-    padding: 3px 0; }
+    padding: 3px 0 3px 19px;
+    background: url(/images/icons_famfamfam/page_white_text.png) 0 1px no-repeat; }
 
 #inputdiv_wrapper {
   position: absolute;

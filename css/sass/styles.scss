@@ -87,7 +87,7 @@ a {
 	overflow: hidden;
 	font-size: 11px;
 	ul {
-		padding: 0 0 0 25px;
+		padding: 2px 0 2px 20px;
 	}
 	li {
 		list-style: none;
@@ -96,14 +96,14 @@ a {
 		}
 		.dirname {
 			display: block;
-			padding: 3px 0;
-			margin: 5px 0 0;
-			background-color: #eee;
+			padding: 3px 0 3px 19px;
+			background: url(/images/icons_famfamfam/folder.png) 0 0 no-repeat;
 		}
 	}
 	a {
 		display: block;
-		padding: 3px 0;
+		padding: 3px 0 3px 19px;
+		background: url(/images/icons_famfamfam/page_white_text.png) 0 1px no-repeat;
 	}
 }
 
