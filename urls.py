@@ -4,7 +4,9 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^$', 'editor.js_play.views.index'),
+	#(r'^$', 'editor.js_play.views.index'),
+	(r'^local/$', 'editor.js_play.views.index', {'view_type': 'local'}),
+	(r'^remote/$', 'editor.js_play.views.index', {'view_type': 'remote'}),
 	(r'^ajax_save_file/$', 'editor.js_play.views.ajax_save_file'),
 	(r'^ajax_get_file/$', 'editor.js_play.views.ajax_get_file'),
 	#(r'^admin/doc/', include('django.contrib.admindocs.urls')),
