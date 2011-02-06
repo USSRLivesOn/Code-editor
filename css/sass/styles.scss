@@ -113,25 +113,19 @@ a {
 	top: 20px;
 	bottom: 45px;
 	right: 0;
+	/*
 	padding-top: 3px;
 	padding-left: 3px;
 	background-color: #eee;
 	border: 1px solid #ddd;
+	*/
+	background-color: #000;
 }
 
 #input_area {
 	width: 100%;
 	height: 100%;
-	white-space: pre; /* or use "pre" if we want to wrap without breaking code */
-	-webkit-nbsp-mode: space; /* treat as regular spaces (ok to break lines) */
-	user-modify: read-write;
-	-moz-user-modify: read-write; /* supposedly doesn't work */
-	-webkit-user-modify: read-write;
-	-webkit-line-break: after-white-space;
-	font-size: 12px;
-	font-family: "Inconsolata", "Consolas", "Monaco", "Andale Mono", Courier, Arial;
 	line-height: 1.5em;
-	overflow: auto;
 	#hack {
 		display: block;
 		width: 0;

@@ -1,16 +1,24 @@
 global_env = [];
 
-const HACK = '<p id="hack"><br></p>';
-
 $(document).ready(function() {
 	bind_filenames();
-	rangy.init();
-	bind_keyboard();
 	bind_saving();
+
+	editor = ace.edit("input_area");
+    editor.setTheme("ace/theme/idle_fingers");
+    
+    var PythonMode = require("ace/mode/python").Mode;
+    editor.getSession().setMode(new PythonMode());
+    editor.setSelectionStyle('text');
+    editor.renderer.setShowPrintMargin(false);
+
+    EditSession = require("ace/edit_session").EditSession;
+    UndoManager = require("ace/undomanager").UndoManager;
 });
 
 function bind_filenames() {
-	$('#file_drawer a.file').click(function() {
+	$('#file_drawer a').click(function (e) {
+		e.preventDefault();
 		var file_path = $(this).attr('href').replace(/(.*)#/, '');
 		$.ajax({
 			type: 'GET',
@@ -19,25 +27,26 @@ function bind_filenames() {
 			dataType: 'text',
 			cache: false,
 			success: function(result) {
-				$("#input_area").html(result + HACK);
+				var syntax_mode = get_syntax_mode(file_path);
+				var new_doc = new EditSession(result);
+				new_doc.setMode(new syntax_mode());
+				new_doc.setUndoManager(new UndoManager());
+				editor.setSession(new_doc);
+				editor.focus();
 				$('#current_filepath').html(file_path);
 			}
-		});
-		return false;
+		}); 
 	});
 }
 
 function bind_saving() {
-	$('#save_current').click(function () {
-		var file_path = $('#current_filepath').html()
-		var file_contents = $("#input_area").html();
-		//console.log("before:\n" + file_contents);
-		file_contents = file_contents.replace(HACK, '');
-		if (file_contents.substr(0, 5) === '<div>') { // don't add a space for the div at the beginning of the file
-			file_contents = file_contents.substring(5);
-		}
-		file_contents = file_contents.replace(/<div>/gi, "\n").replace(/<\/div>/gi, '').replace(/<br>/gi, '');
-		//console.log("after:\n" + file_contents);
+	$('#save_current').click(function (e) {
+		e.preventDefault();
+		var file_path = $('#current_filepath').html();
+		var editor_session = editor.getSession();
+		var length = editor_session.getLength();
+		var file_contents = editor_session.getLines(0, length).join("\n");
+		console.log(file_contents);
 		$.ajax({
 			type: 'POST',
 			url: '/ajax_save_file/',
@@ -45,37 +54,25 @@ function bind_saving() {
 			cache: false,
 			success: function(request, status_text) {}
 		});
-		check_endinput_hack();
-		return false;
 	});
 }
 
-function bind_keyboard() {
-	$(document).keydown(function (e) {
-		//var sel = rangy.getSelection();
-		//console.log("anchor: (" + sel.anchorNode + "," + sel.anchorOffset + "); focus: (" + sel.focusNode + "," + sel.focusOffset + ")");
-		if (e.keyCode === 9) { // tab
-			var newNode = document.createTextNode("\t");
-			var sel = rangy.getSelection();
-			var range = sel.getRangeAt(0);
-			range.insertNode(newNode);
-			sel = rangy.getSelection();
-			if (typeof(sel.anchorNode.nextSibling) !== 'undefined' && sel.anchorNode.nextSibling !== null && sel.anchorNode.nextSibling.nodeType === 3) {
-				sel.collapse(sel.anchorNode.nextSibling, 1);
-			}
-			check_endinput_hack();
-			return false;
-		} else if (e.keyCode === 8) { // backspace
-			check_endinput_hack();
-			}
-	});
-}
-
-function check_endinput_hack () {
-	var input_area = $("#input_area");
-	//console.log('checked');
-	if (input_area.html().indexOf(HACK) === -1) {
-		input_area.append(HACK);
-		//console.log('fixed');
+function get_syntax_mode (file_path) {
+	var extension = file_path.match(/\.[^\.]+$/)[0].substr(1);
+	var types = {}
+	types.js = 'javascript';
+	types.xml = 'xml';
+	types.html = 'html';
+	types.css = 'css';
+	types.scss = 'css';
+	types.py = 'python';
+	types.php = 'php';
+	types.java = 'java';
+	types.rb = 'ruby';
+	if (extension in types) {
+		var mode = require("ace/mode/" + types[extension]).Mode;
+	} else {
+		var mode = require("ace/mode/text").Mode;
 	}
+	return mode;
 }

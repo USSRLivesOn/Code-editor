@@ -15,16 +15,17 @@ class File:
 class LocalFile(File):
 
 	# requires full file path, not relative
-	def get_file_contents (self, full_file_path):
+	def get_file_contents (self, full_file_path, escape_to_html):
 		#print 'attempting to retrieve: ' + full_file_path
 		with open(full_file_path, 'r') as f:
 			f_contents = f.read()
-			f_contents = self.raw_to_html(f_contents)
+			if escape_to_html:
+				f_contents = self.raw_to_html(f_contents)
 			return f_contents
 
 
 	def save_file_contents (self, full_file_path, contents):
-		contents = self.html_to_raw(contents)
+		#contents = self.html_to_raw(contents)
 		try:
 			f = open(full_file_path, 'w')
 			#temp_file = tmpfile()
