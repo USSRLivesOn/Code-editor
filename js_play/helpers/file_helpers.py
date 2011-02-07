@@ -17,31 +17,28 @@ class LocalFile(File):
 	# requires full file path, not relative
 	def get_file_contents (self, full_file_path, escape_to_html):
 		#print 'attempting to retrieve: ' + full_file_path
-		with open(full_file_path, 'r') as f:
-			f_contents = f.read()
-			if escape_to_html:
-				f_contents = self.raw_to_html(f_contents)
-			return f_contents
+		try: 
+			with open(full_file_path, 'r') as f:
+				f_contents = f.read()
+				if escape_to_html:
+					f_contents = self.raw_to_html(f_contents)
+				return f_contents
+		except:
+			return ''
 
 
 	def save_file_contents (self, full_file_path, contents):
 		#contents = self.html_to_raw(contents)
 		try:
-			f = open(full_file_path, 'w')
-			#temp_file = tmpfile()
-			# create new file with contents
-			# remove rename old file
-			# rename new file
-			# delete old file
-			f.write(contents)
-			f.close()
-			#print 'would have saved stuff in: ' + full_file_path
+			with open(full_file_path, 'w') as f:
+				f.write(contents)
+				#print 'would have saved stuff in: ' + full_file_path
 		except:
-			print 'some error occurred...'
+			print 'Error saving to:', full_file_path
 
 class RemoteFile(File):
 
-	def get_file_contents (self, full_file_path):
+	def get_file_contents (self, full_file_path, escape_to_html):
 		return ''
 	
 	def save_file_contents (self, full_file_path, contents):

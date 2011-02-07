@@ -7,6 +7,7 @@ from helpers.file_helpers import LocalFile, RemoteFile
 def index (request, session_type):
 	if session_type == 'local':
 		starting_file = 'js_play/templates/editor.html' # temp default
+		starting_file = ''
 		request.session['session_type'] = 'local'
 	elif session_type == 'remote':
 		starting_file = ''
@@ -15,8 +16,9 @@ def index (request, session_type):
 	current_dir = dir_obj.get_current_dir()
 	dir_structure = dir_obj.get_dir_structure(current_dir)
 	f_contents = file_obj.get_file_contents(full_file_path = current_dir + '/' + starting_file, escape_to_html = True)
+	starting_filename = starting_file.rsplit('/', 1)[-1]
 	return render_to_response('js_play/templates/editor.html',
-		{'dir_structure': dir_structure, 'file_contents': f_contents, 'file_path': starting_file})
+		{'dir_structure': dir_structure, 'file_contents': f_contents, 'file_path': starting_file, 'file_name': starting_filename})
 
 
 # TODO: add validation

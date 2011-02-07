@@ -56,9 +56,18 @@ table {
 *************************************************************/
 
 @mixin border_radius($px) {
-	border-radius: $px;
 	-moz-border-radius: $px;
 	-webkit-border-radius: $px;
+	border-radius: $px;
+}
+
+@mixin top_border_radius($px) {
+	-moz-border-radius-topleft: $px;
+	-moz-border-radius-topright: $px;
+	-webkit-border-top-left-radius: $px;
+	-webkit-border-top-right-radius: $px;
+	border-top-left-radius: $px;
+	border-top-right-radius: $px;
 }
 
 body {
@@ -74,17 +83,58 @@ a {
 	}
 }
 
+#editor_tabs {
+	position: absolute;
+	left: 250px;
+	right: 0;
+	top: 30px;
+	padding-left: 20px;
+	border-bottom: 1px solid #bbb;
+	height: 22px;
+	li {
+		float: left;
+		display: block;
+	}
+	li a {
+		display: block;
+		padding: 5px 0 6px 7px;
+		margin-right: 5px;
+		width: 100px;
+		background-color: #bbb;
+		border: 1px solid #bbb;
+		@include top_border_radius(7px);
+		color: #444;
+		font-size: 11px;
+		white-space: nowrap;
+		overflow: hidden;
+		&.current {
+			background-color: #eee;
+			border-bottom: 0;
+			color: #000;
+			&:hover {
+				background-color: #eee;
+				border-bottom: 0;
+				color: #000;	
+			}
+		}
+		&:hover {
+			background-color: #ccc;
+			color: #000;
+			text-decoration: none;
+		}
+	}
+}
+
 #file_drawer {
-	float: left;
+	position: absolute;
+	top: 52px;
+	bottom: 45px;
 	width: 250px;
-	margin: 40px 0 0 20px;
 	padding: 5px 0;
-	border: 2px solid #ddd;
-	-moz-border-radius-topleft: 5px;
-	-moz-border-radius-bottomleft: 5px;
-	-webkit-border-radius-topleft: 5px;
-	-webkit-border-radius-bottomleft: 5px;
-	overflow: hidden;
+	border-top: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+	overflow: auto;
+	color: #000;
 	font-size: 11px;
 	ul {
 		padding: 2px 0 2px 20px;
@@ -103,45 +153,24 @@ a {
 	a {
 		display: block;
 		padding: 3px 0 3px 19px;
+		color: #444;
 		background: url(/images/icons_famfamfam/page_white_text.png) 0 1px no-repeat;
 	}
 }
 
 #inputdiv_wrapper {
 	position: absolute;
-	left: 282px;
-	top: 20px;
+	left: 250px;
+	top: 53px;
 	bottom: 45px;
 	right: 0;
-	/*
-	padding-top: 3px;
-	padding-left: 3px;
-	background-color: #eee;
-	border: 1px solid #ddd;
-	*/
-	background-color: #000;
+	border-top: 4px solid #eee;
 }
 
 #input_area {
 	width: 100%;
 	height: 100%;
 	line-height: 1.5em;
-	#hack {
-		display: block;
-		width: 0;
-		height: 0;
-		-moz-user-select: none;
-		-webkit-user-select: none;
-		/*
-		br {
-			display: block;
-			width: 0;
-			height: 0;
-			-moz-user-select: none;
-			-webkit-user-select: none;
-		}
-		*/
-	}
 }
 
 #bottombar {
