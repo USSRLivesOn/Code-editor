@@ -83,7 +83,7 @@ a {
 	}
 }
 
-#editor_tabs {
+#editor_tabs ul {
 	position: absolute;
 	left: 250px;
 	right: 0;
@@ -94,11 +94,11 @@ a {
 	li {
 		float: left;
 		display: block;
+		margin-right: 5px;
 	}
 	li a {
 		display: block;
 		padding: 5px 0 6px 7px;
-		margin-right: 5px;
 		width: 100px;
 		background-color: #bbb;
 		border: 1px solid #bbb;

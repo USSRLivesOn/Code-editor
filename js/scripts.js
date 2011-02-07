@@ -19,8 +19,11 @@ function bind_tabs() {
 	$('#editor_tabs a').click(function (e) {
 		e.preventDefault();
 	});
-	$('#editor_tabs li').sortable({
-		axis: 'x'
+	$('#editor_tabs ul').sortable({
+		items: 'li',
+		axis: 'x',
+		tolerance: 'intersect', /* don't think this is working */
+		revert: 150
 	});
 }
 
