@@ -106,6 +106,9 @@ function get_syntax_mode (file_string) {
 	types.php = 'php';
 	types.java = 'java';
 	types.rb = 'ruby';
+	types.cpp = 'c_cpp';
+	types.h = 'c_cpp';
+	types.coffee = 'coffee'
 	var mode;
 	if (extension in types) {
 		var mode_obj = require("ace/mode/" + types[extension]);
@@ -113,9 +116,15 @@ function get_syntax_mode (file_string) {
 			$.ajax({
 				async: false,
 				url: '/js/ace/mode-' + types[extension] + '.js',
-				type: 'script'
+				type: 'script',
+				success: function () {
+					mode_obj = require("ace/mode/" + types[extension]);
+				},
+				error: function () {
+					mode_obj = require("ace/mode/text");
+				}
 			});
-			mode_obj = require("ace/mode/" + types[extension]);
+			
 		}
 		mode = mode_obj.Mode;
 	} else {
