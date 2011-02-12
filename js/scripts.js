@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
 	bind_filenames();
 	bind_saving();
 	bind_tabs();
@@ -13,7 +13,7 @@ $(document).ready(function() {
 	UndoManager = require("ace/undomanager").UndoManager;
 });
 
-function bind_filenames() {
+function bind_filenames () {
 	$('#file_drawer a').click(function (e) {
 		e.preventDefault();
 		var file_path = $(this).attr('href').replace(/(.*)#/, '');
@@ -32,7 +32,7 @@ function bind_filenames() {
 	});
 }
 
-function bind_saving() {
+function bind_saving () {
 	var save_function = function (e) {
 		e.preventDefault();
 		var tab_id = get_current_tab_id();
@@ -49,13 +49,13 @@ function bind_saving() {
 	$('#save_current').click(save_function);
 }
 
-function bind_tabs() {
+function bind_tabs () {
 	tabs = []; /* global */
 	$('#editor_tabs a').live('click', function (e) {
 		e.preventDefault();
 		var current_tab_id = get_current_tab_id();
 		tabs[current_tab_id].contents = get_editor_contents();
-		var target_tab_id = parseInt($(this).attr('id').substr(4));
+		var target_tab_id = parseInt($(this).attr('id').substr(4), 10);
 		focus_tab(target_tab_id);
 	});
 	$('#editor_tabs ul').sortable({
@@ -85,7 +85,7 @@ function focus_tab (tab_index) {
 }
 
 function get_current_tab_id () {
-	return parseInt($('#editor_tabs .current a').attr('id').substr(4));
+	return parseInt($('#editor_tabs .current a').attr('id').substr(4), 10);
 }
 
 /* Accepts either a full file path or just a filename */
@@ -106,18 +106,27 @@ function get_syntax_mode (file_string) {
 	types.php = 'php';
 	types.java = 'java';
 	types.rb = 'ruby';
-	var mode = '';
+	var mode;
 	if (extension in types) {
-		mode = require("ace/mode/" + types[extension]).Mode;
+		var mode_obj = require("ace/mode/" + types[extension]);
+		if (mode_obj === null) {
+			$.ajax({
+				async: false,
+				url: '/js/ace/mode-' + types[extension] + '.js',
+				type: 'script'
+			});
+			mode_obj = require("ace/mode/" + types[extension]);
+		}
+		mode = mode_obj.Mode;
 	} else {
 		mode = require("ace/mode/text").Mode;
 	}
 	return mode;
 }
 
-function set_editor_content (content, syntax_mode) {
+function set_editor_content (content, Syntax_mode) {
 	var new_doc = new EditSession(content);
-	new_doc.setMode(new syntax_mode());
+	new_doc.setMode(new Syntax_mode());
 	new_doc.setUndoManager(new UndoManager());
 	editor.setSession(new_doc);
 	editor.focus();
