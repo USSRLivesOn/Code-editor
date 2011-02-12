@@ -53,8 +53,6 @@ function bind_tabs () {
 	tabs = []; /* global */
 	$('#editor_tabs a').live('click', function (e) {
 		e.preventDefault();
-		var current_tab_id = get_current_tab_id();
-		tabs[current_tab_id].contents = get_editor_contents();
 		var target_tab_id = parseInt($(this).attr('id').substr(4), 10);
 		focus_tab(target_tab_id);
 	});
@@ -69,23 +67,36 @@ function bind_tabs () {
 function add_tab (file_name, file_path, contents) {
 	var tab_index = tabs.length;
 	tabs[tab_index] = {'file_name': file_name, 'file_path': file_path, 'contents': contents};
+	tabs[tab_index].cursor_pos = {'row': 0, 'column': 0};
 	var tab_string = '<li><a id="tab_' + tab_index + '" href="#">' + file_name + '</a></li>';
 	$('#editor_tabs ul').append(tab_string);
 	return tab_index;
 }
 
-function focus_tab (tab_index) {
-	//console.log(tabs);
-	//console.log(tab_index);
-	if (typeof(tabs[tab_index]) !== 'undefined') {
-		var syntax_mode = get_syntax_mode(tabs[tab_index].file_path);
-		set_editor_content(tabs[tab_index].contents, syntax_mode);
-		$('#tab_' + tab_index).parent().addClass('current').siblings().removeClass('current');
+function focus_tab (target_tab_id) {
+	var current_tab_id = get_current_tab_id();
+	if (typeof(tabs[current_tab_id]) !== 'undefined') {
+		tabs[current_tab_id].contents = get_editor_contents();
+		tabs[current_tab_id].cursor_pos = get_cursor_position();
+	}
+	if (typeof(tabs[target_tab_id]) !== 'undefined') {
+		var syntax_mode = get_syntax_mode(tabs[target_tab_id].file_path);
+		set_editor_content(tabs[target_tab_id].contents, syntax_mode);
+		$('#tab_' + target_tab_id).parent().addClass('current').siblings().removeClass('current');
+		set_cursor_position(tabs[target_tab_id].cursor_pos);
 	}
 }
 
 function get_current_tab_id () {
 	return parseInt($('#editor_tabs .current a').attr('id').substr(4), 10);
+}
+
+function get_cursor_position () {
+	return editor.getCursorPosition();
+}
+
+function set_cursor_position (pos) {
+	editor.moveCursorToPosition(pos);
 }
 
 /* Accepts either a full file path or just a filename */
