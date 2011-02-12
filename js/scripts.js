@@ -1,5 +1,3 @@
-global_env = [];
-
 $(document).ready(function() {
 	bind_filenames();
 	bind_saving();
@@ -15,18 +13,6 @@ $(document).ready(function() {
 	UndoManager = require("ace/undomanager").UndoManager;
 });
 
-function bind_tabs() {
-	$('#editor_tabs a').click(function (e) {
-		e.preventDefault();
-	});
-	$('#editor_tabs ul').sortable({
-		items: 'li',
-		axis: 'x',
-		tolerance: 'intersect', /* don't think this is working */
-		revert: 150
-	});
-}
-
 function bind_filenames() {
 	$('#file_drawer a').click(function (e) {
 		e.preventDefault();
@@ -39,14 +25,8 @@ function bind_filenames() {
 			dataType: 'text',
 			cache: false,
 			success: function(result) {
-				var syntax_mode = get_syntax_mode(file_path);
-				var new_doc = new EditSession(result);
-				new_doc.setMode(new syntax_mode());
-				new_doc.setUndoManager(new UndoManager());
-				editor.setSession(new_doc);
-				editor.focus();
-				$('#current_filepath').html(file_path);
-				$('#editor_tabs a.current').html(file_name);
+				var newtab_index = add_tab(file_name, file_path, result);
+				focus_tab(newtab_index);
 			}
 		}); 
 	});
@@ -55,11 +35,9 @@ function bind_filenames() {
 function bind_saving() {
 	var save_function = function (e) {
 		e.preventDefault();
-		var file_path = $('#current_filepath').html();
-		var editor_session = editor.getSession();
-		var length = editor_session.getLength();
-		var file_contents = editor_session.getLines(0, length).join("\n");
-		console.log(file_contents);
+		var tab_id = get_current_tab_id();
+		var file_path = tabs[tab_id].file_path;
+		var file_contents = get_editor_contents();
 		$.ajax({
 			type: 'POST',
 			url: '/ajax_save_file/',
@@ -67,18 +45,58 @@ function bind_saving() {
 			cache: false,
 			success: function(request, status_text) {}
 		});
-	}
+	};
 	$('#save_current').click(save_function);
 }
 
-function get_syntax_mode (file_path) {
-	var extension = file_path.match(/\.[^\.]+$/);
+function bind_tabs() {
+	tabs = []; /* global */
+	$('#editor_tabs a').live('click', function (e) {
+		e.preventDefault();
+		var current_tab_id = get_current_tab_id();
+		tabs[current_tab_id].contents = get_editor_contents();
+		var target_tab_id = parseInt($(this).attr('id').substr(4));
+		focus_tab(target_tab_id);
+	});
+	$('#editor_tabs ul').sortable({
+		items: 'li',
+		axis: 'x',
+		tolerance: 'intersect', /* don't think this is working */
+		revert: 150
+	});
+}
+
+function add_tab (file_name, file_path, contents) {
+	var tab_index = tabs.length;
+	tabs[tab_index] = {'file_name': file_name, 'file_path': file_path, 'contents': contents};
+	var tab_string = '<li><a id="tab_' + tab_index + '" href="#">' + file_name + '</a></li>';
+	$('#editor_tabs ul').append(tab_string);
+	return tab_index;
+}
+
+function focus_tab (tab_index) {
+	//console.log(tabs);
+	//console.log(tab_index);
+	if (typeof(tabs[tab_index]) !== 'undefined') {
+		var syntax_mode = get_syntax_mode(tabs[tab_index].file_path);
+		set_editor_content(tabs[tab_index].contents, syntax_mode);
+		$('#tab_' + tab_index).parent().addClass('current').siblings().removeClass('current');
+	}
+}
+
+function get_current_tab_id () {
+	return parseInt($('#editor_tabs .current a').attr('id').substr(4));
+}
+
+/* Accepts either a full file path or just a filename */
+function get_syntax_mode (file_string) {
+	var extension = file_string.match(/\.[^\.]+$/);
 	if (extension === null) { // for files without an extension
-		extension = ''
+		extension = '';
 	} else {
 		extension = extension[0].substr(1);
 	}
-	var types = {}
+	var types = {};
 	types.js = 'javascript';
 	types.xml = 'xml';
 	types.html = 'html';
@@ -88,10 +106,27 @@ function get_syntax_mode (file_path) {
 	types.php = 'php';
 	types.java = 'java';
 	types.rb = 'ruby';
+	var mode = '';
 	if (extension in types) {
-		var mode = require("ace/mode/" + types[extension]).Mode;
+		mode = require("ace/mode/" + types[extension]).Mode;
 	} else {
-		var mode = require("ace/mode/text").Mode;
+		mode = require("ace/mode/text").Mode;
 	}
 	return mode;
+}
+
+function set_editor_content (content, syntax_mode) {
+	var new_doc = new EditSession(content);
+	new_doc.setMode(new syntax_mode());
+	new_doc.setUndoManager(new UndoManager());
+	editor.setSession(new_doc);
+	editor.focus();
+}
+
+function get_editor_contents () {
+	var editor_session = editor.getSession();
+	var length = editor_session.getLength();
+	var file_contents = editor_session.getLines(0, length).join("\n");
+	//console.log(file_contents);
+	return file_contents;
 }

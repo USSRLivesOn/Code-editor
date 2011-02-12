@@ -7,7 +7,7 @@ from helpers.file_helpers import LocalFile, RemoteFile
 def index (request, session_type):
 	if session_type == 'local':
 		starting_file = 'js_play/templates/editor.html' # temp default
-		starting_file = ''
+		#starting_file = ''
 		request.session['session_type'] = 'local'
 	elif session_type == 'remote':
 		starting_file = ''

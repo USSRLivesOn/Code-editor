@@ -3,12 +3,10 @@
 <div id="editor_tabs">
 	<ul>
 		% if file_name == '':
-			<li><a class="current" href="#">Untitled</a></li>
+			<li class="current"><a href="#">Untitled</a></li>
 		% else:
-			<li><a class="current" href="#${file_path}">${file_name}</a></li>
+			<li class="current"><a id="tab_${file_path}" href="#${file_path}">${file_name}</a></li>
 		% endif
-		<li><a href="#">Tab 2</a></li>
-		<li><a href="#">Tab 3</a></li>
 	</ul>
 </div>
 <div id="file_drawer">
@@ -20,7 +18,7 @@
 	<div id="input_area" spellcheck="false">${file_contents | n}</div>
 </div>
 <div id="bottombar">
-	<a class="button" id="save_current" href="#">Save</a>
+	<a class="button" id="save_current" href="#">Save current</a>
 <div>
 <div id="current_filepath">${file_path}</div>
 
