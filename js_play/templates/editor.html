@@ -3,9 +3,9 @@
 <div id="editor_tabs">
 	<ul>
 		% if file_name == '':
-			<li class="current"><a href="#">Untitled</a></li>
+			<li class="current"><a id="tab_-1" href="#">Untitled</a></li>
 		% else:
-			<li class="current"><a id="tab_${file_path}" href="#${file_path}">${file_name}</a></li>
+			<li class="current"><a id="tab_0" href="#${file_path}">${file_name}</a></li>
 		% endif
 	</ul>
 </div>

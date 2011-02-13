@@ -2,7 +2,11 @@ $(document).ready(function () {
 	bind_filenames();
 	bind_saving();
 	bind_tabs();
+	init_editor();
+	init_tabs();
+});
 
+function init_editor () {
 	editor = ace.edit("input_area");
 	editor.setTheme("ace/theme/idle_fingers");
 	var PythonMode = require("ace/mode/python").Mode;
@@ -11,7 +15,7 @@ $(document).ready(function () {
 	editor.renderer.setShowPrintMargin(false);
 	EditSession = require("ace/edit_session").EditSession;
 	UndoManager = require("ace/undomanager").UndoManager;
-});
+}
 
 function bind_filenames () {
 	$('#file_drawer a').click(function (e) {
@@ -49,8 +53,23 @@ function bind_saving () {
 	$('#save_current').click(save_function);
 }
 
-function bind_tabs () {
+/* Only works for 1 default tab open for now */
+function init_tabs () {
 	tabs = []; /* global */
+	var index, file_name, file_path, contents;
+	$('#editor_tabs li a').each(function () {
+		index = parseInt($(this).attr('id').substr(4), 10);
+		file_name = $(this).html();
+		file_path = $(this).attr('href').replace(/(.*)#/, '');
+		if (file_path !== '') {
+			contents = get_editor_contents();
+			tabs[index] = {'file_name': file_name, 'file_path': file_path, 'contents': contents};
+			tabs[index].cursor_pos = {'row': 0, 'column': 0};
+		}
+	});
+}
+
+function bind_tabs () {
 	$('#editor_tabs a').live('click', function (e) {
 		e.preventDefault();
 		var target_tab_id = parseInt($(this).attr('id').substr(4), 10);
@@ -64,7 +83,15 @@ function bind_tabs () {
 	});
 }
 
+// Adds tab to list of available tabs and returns index
+// Returns index of existing tab if the file is already open
 function add_tab (file_name, file_path, contents) {
+	var i;
+	for (i=0; i<tabs.length; i+=1) {
+		if ((typeof(tabs[i].file_path) !== 'undefined') && (tabs[i].file_path === file_path)) {
+			return i;
+		}
+	}
 	var tab_index = tabs.length;
 	tabs[tab_index] = {'file_name': file_name, 'file_path': file_path, 'contents': contents};
 	tabs[tab_index].cursor_pos = {'row': 0, 'column': 0};
@@ -75,7 +102,9 @@ function add_tab (file_name, file_path, contents) {
 
 function focus_tab (target_tab_id) {
 	var current_tab_id = get_current_tab_id();
-	if (typeof(tabs[current_tab_id]) !== 'undefined') {
+	if (current_tab_id === -1) {
+		$('#editor_tabs #tab_-1').remove();
+	} else if (typeof(tabs[current_tab_id]) !== 'undefined') {
 		tabs[current_tab_id].contents = get_editor_contents();
 		tabs[current_tab_id].cursor_pos = get_cursor_position();
 	}
@@ -119,7 +148,7 @@ function get_syntax_mode (file_string) {
 	types.rb = 'ruby';
 	types.cpp = 'c_cpp';
 	types.h = 'c_cpp';
-	types.coffee = 'coffee'
+	types.coffee = 'coffee';
 	var mode;
 	if (extension in types) {
 		var mode_obj = require("ace/mode/" + types[extension]);
@@ -156,6 +185,5 @@ function get_editor_contents () {
 	var editor_session = editor.getSession();
 	var length = editor_session.getLength();
 	var file_contents = editor_session.getLines(0, length).join("\n");
-	//console.log(file_contents);
 	return file_contents;
 }
