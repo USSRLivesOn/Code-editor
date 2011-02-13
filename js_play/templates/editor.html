@@ -27,7 +27,7 @@
 	% if 'dirs' in dir_structure:
 		% for dirdata in dir_structure['dirs']:
 			<li>
-				<span class="dirname">${dirdata['name']}</span>
+				<div class="dirname">${dirdata['name']}</div>
 				<ul>
 					% if len(dirdata['contents']) > 0:
 						${self.print_folder(dirdata['contents'])}

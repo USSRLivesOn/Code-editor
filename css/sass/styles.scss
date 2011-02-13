@@ -77,9 +77,11 @@ body {
 
 a {
 	text-decoration: none;
+	/*
 	&:hover{
 		text-decoration: underline;
 	}
+	*/
 }
 
 #editor_tabs ul {
@@ -135,6 +137,7 @@ a {
 	overflow: auto;
 	color: #000;
 	font-size: 11px;
+	overflow-y: scroll;
 	ul {
 		padding: 2px 0 2px 20px;
 	}
@@ -144,16 +147,25 @@ a {
 			display: none;
 		}
 		.dirname {
-			display: block;
+			cursor: pointer;
 			padding: 3px 0 3px 19px;
 			background: url(/images/icons_famfamfam/folder.png) 0 0 no-repeat;
+			&.collapsed {	
+				background-image: url(/images/icons_famfamfam/folder_page_white.png);
+			}
+			&:hover {
+				background-color: #eee;
+			}
 		}
-	}
-	a {
-		display: block;
-		padding: 3px 0 3px 19px;
-		color: #444;
-		background: url(/images/icons_famfamfam/page_white_text.png) 0 1px no-repeat;
+		a {
+			display: block;
+			padding: 3px 0 3px 19px;
+			color: #444;
+			background: url(/images/icons_famfamfam/page_white_text.png) 0 1px no-repeat;
+			&:hover {
+				background-color: #eee;
+			}
+		}
 	}
 }
 

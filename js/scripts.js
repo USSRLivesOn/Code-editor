@@ -1,5 +1,5 @@
 $(document).ready(function () {
-	bind_filenames();
+	bind_file_drawer();
 	bind_saving();
 	bind_tabs();
 	init_editor();
@@ -17,7 +17,7 @@ function init_editor () {
 	UndoManager = require("ace/undomanager").UndoManager;
 }
 
-function bind_filenames () {
+function bind_file_drawer () {
 	$('#file_drawer a').click(function (e) {
 		e.preventDefault();
 		var file_path = $(this).attr('href').replace(/(.*)#/, '');
@@ -33,6 +33,10 @@ function bind_filenames () {
 				focus_tab(newtab_index);
 			}
 		}); 
+	});
+	$('#file_drawer .dirname').click(function (e) {
+		e.preventDefault();
+		$(this).toggleClass('collapsed').next().slideToggle(200, 'easeOutCubic');
 	});
 }
 
@@ -110,7 +114,7 @@ function focus_tab (target_tab_id) {
 	}
 	if (typeof(tabs[target_tab_id]) !== 'undefined') {
 		var syntax_mode = get_syntax_mode(tabs[target_tab_id].file_path);
-		set_editor_content(tabs[target_tab_id].contents, syntax_mode);
+		set_editor_contents(tabs[target_tab_id].contents, syntax_mode);
 		$('#tab_' + target_tab_id).parent().addClass('current').siblings().removeClass('current');
 		set_cursor_position(tabs[target_tab_id].cursor_pos);
 	}
@@ -173,7 +177,7 @@ function get_syntax_mode (file_string) {
 	return mode;
 }
 
-function set_editor_content (content, Syntax_mode) {
+function set_editor_contents (content, Syntax_mode) {
 	var new_doc = new EditSession(content);
 	new_doc.setMode(new Syntax_mode());
 	new_doc.setUndoManager(new UndoManager());
