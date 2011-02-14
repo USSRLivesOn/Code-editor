@@ -3,9 +3,15 @@
 <div id="editor_tabs">
 	<ul>
 		% if file_name == '':
-			<li class="current"><a id="tab_-1" href="#">Untitled</a></li>
+			<li class="current">
+				<a class="tab" id="tab_-1" href="#">Untitled</a>
+				<a class="closetab" href="#">x</a>
+			</li>
 		% else:
-			<li class="current"><a id="tab_0" href="#${file_path}">${file_name}</a></li>
+			<li class="current">
+				<a class="tab" id="tab_0" href="#${file_path}">${file_name}</a>
+				<a class="closetab" href="#">x</a>
+			</li>
 		% endif
 	</ul>
 </div>
@@ -20,8 +26,6 @@
 <div id="bottombar">
 	<a class="button" id="save_current" href="#">Save current</a>
 <div>
-<div id="current_filepath">${file_path}</div>
-
 
 <%def name="print_folder(dir_structure)">
 	% if 'dirs' in dir_structure:

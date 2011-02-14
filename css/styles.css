@@ -75,8 +75,9 @@ a {
     float: left;
     display: block;
     margin-right: 5px; }
-    #editor_tabs ul li a {
+    #editor_tabs ul li a.tab {
       display: block;
+      float: left;
       padding: 5px 0 6px 7px;
       width: 100px;
       background-color: #bbb;
@@ -91,18 +92,33 @@ a {
       font-size: 11px;
       white-space: nowrap;
       overflow: hidden; }
-      #editor_tabs ul li a:hover {
+      #editor_tabs ul li a.tab:hover {
         background-color: #ccc;
         color: #000;
         text-decoration: none; }
-    #editor_tabs ul li.current a {
+    #editor_tabs ul li.current a.tab {
       background-color: #eee;
       border-bottom: 0;
       color: #000; }
-      #editor_tabs ul li.current a:hover {
+      #editor_tabs ul li.current a.tab:hover {
         background-color: #eee;
         border-bottom: 0;
         color: #000; }
+    #editor_tabs ul li a.closetab {
+      display: block;
+      float: left;
+      height: 12px;
+      width: 12px;
+      font-size: 10px;
+      margin: 6px 0 0 -17px;
+      text-align: center;
+      color: #444;
+      font-family: Verdana, sans-serif; }
+      #editor_tabs ul li a.closetab:hover {
+        background-color: #ccc;
+        -moz-border-radius: 6px;
+        -webkit-border-radius: 6px;
+        border-radius: 6px; }
 
 #file_drawer {
   position: absolute;
@@ -171,6 +187,3 @@ a {
       text-decoration: none;
       background-color: #ddd;
       border: 1px solid #ccc; }
-
-#current_filepath {
-  display: none; }

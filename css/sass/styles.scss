@@ -96,8 +96,9 @@ a {
 		float: left;
 		display: block;
 		margin-right: 5px;
-		a {
+		a.tab {
 			display: block;
+			float: left;
 			padding: 5px 0 6px 7px;
 			width: 100px;
 			background-color: #bbb;
@@ -113,7 +114,7 @@ a {
 				text-decoration: none;
 			}
 		}
-		&.current a {
+		&.current a.tab {
 			background-color: #eee;
 			border-bottom: 0;
 			color: #000;
@@ -121,6 +122,21 @@ a {
 				background-color: #eee;
 				border-bottom: 0;
 				color: #000;	
+			}
+		}
+		a.closetab {
+			display: block;
+			float: left;
+			height: 12px;
+			width: 12px;
+			font-size: 10px;
+			margin: 6px 0 0 -17px;
+			text-align: center;
+			color: #444;
+			font-family: Verdana, sans-serif;
+			&:hover {
+				background-color: #ccc;
+				@include border_radius(6px);
 			}
 		}
 	}
@@ -204,8 +220,4 @@ a {
 			border: 1px solid #ccc;
 		}
 	}
-}
-
-#current_filepath {
-	display: none;
 }

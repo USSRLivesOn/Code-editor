@@ -44,15 +44,17 @@ function bind_saving () {
 	var save_function = function (e) {
 		e.preventDefault();
 		var tab_id = get_current_tab_id();
-		var file_path = tabs[tab_id].file_path;
-		var file_contents = get_editor_contents();
-		$.ajax({
-			type: 'POST',
-			url: '/ajax_save_file/',
-			data: {'file_path': file_path, 'file_contents': file_contents},
-			cache: false,
-			success: function(request, status_text) {}
-		});
+		if (tab_id !== -1) {
+			var file_path = tabs[tab_id].file_path;
+			var file_contents = get_editor_contents();
+			$.ajax({
+				type: 'POST',
+				url: '/ajax_save_file/',
+				data: {'file_path': file_path, 'file_contents': file_contents},
+				cache: false,
+				success: function(request, status_text) {}
+			});
+		}
 	};
 	$('#save_current').click(save_function);
 }
@@ -61,7 +63,7 @@ function bind_saving () {
 function init_tabs () {
 	tabs = []; /* global */
 	var index, file_name, file_path, contents;
-	$('#editor_tabs li a').each(function () {
+	$('#editor_tabs li a.tab').each(function () {
 		index = parseInt($(this).attr('id').substr(4), 10);
 		file_name = $(this).html();
 		file_path = $(this).attr('href').replace(/(.*)#/, '');
@@ -74,10 +76,20 @@ function init_tabs () {
 }
 
 function bind_tabs () {
-	$('#editor_tabs a').live('click', function (e) {
+	$('#editor_tabs a.tab').live('click', function (e) {
 		e.preventDefault();
 		var target_tab_id = parseInt($(this).attr('id').substr(4), 10);
 		focus_tab(target_tab_id);
+	});
+	$('#editor_tabs a.closetab').live('click', function (e) {
+		e.preventDefault();
+		var tab_id = parseInt($(this).prev().attr('id').substr(4), 10);
+		var adjacent_tab_id = get_adjacent_tab_id(tab_id);
+		if (adjacent_tab_id === -1) {
+			add_blank_tab();
+		}
+		focus_tab(adjacent_tab_id);
+		remove_tab(tab_id);
 	});
 	$('#editor_tabs ul').sortable({
 		items: 'li',
@@ -92,22 +104,34 @@ function bind_tabs () {
 function add_tab (file_name, file_path, contents) {
 	var i;
 	for (i=0; i<tabs.length; i+=1) {
-		if ((typeof(tabs[i].file_path) !== 'undefined') && (tabs[i].file_path === file_path)) {
+		if ((typeof(tabs[i]) !== 'undefined') && tabs[i] !== null && (tabs[i].file_path === file_path)) {
 			return i;
 		}
 	}
 	var tab_index = tabs.length;
 	tabs[tab_index] = {'file_name': file_name, 'file_path': file_path, 'contents': contents};
 	tabs[tab_index].cursor_pos = {'row': 0, 'column': 0};
-	var tab_string = '<li><a id="tab_' + tab_index + '" href="#">' + file_name + '</a></li>';
+	var tab_string = '<li><a class="tab" id="tab_' + tab_index + '" href="#">' + file_name + '</a><a class="closetab" href="#">x</a></li>';
 	$('#editor_tabs ul').append(tab_string);
 	return tab_index;
+}
+
+function add_blank_tab () {
+	var tab_index = -1;
+	var file_name = 'Untitled';
+	var tab_string = '<li><a class="tab" id="tab_' + tab_index + '" href="#">' + file_name + '</a><a class="closetab" href="#">x</a></li>';
+	$('#editor_tabs ul').append(tab_string);
+}
+
+function remove_tab (tab_id) {
+	$('#editor_tabs #tab_' + tab_id).parent().remove();
+	tabs[tab_id] = null;
 }
 
 function focus_tab (target_tab_id) {
 	var current_tab_id = get_current_tab_id();
 	if (current_tab_id === -1) {
-		$('#editor_tabs #tab_-1').remove();
+		$('#editor_tabs #tab_-1').parent().remove();
 	} else if (typeof(tabs[current_tab_id]) !== 'undefined') {
 		tabs[current_tab_id].contents = get_editor_contents();
 		tabs[current_tab_id].cursor_pos = get_cursor_position();
@@ -115,13 +139,31 @@ function focus_tab (target_tab_id) {
 	if (typeof(tabs[target_tab_id]) !== 'undefined') {
 		var syntax_mode = get_syntax_mode(tabs[target_tab_id].file_path);
 		set_editor_contents(tabs[target_tab_id].contents, syntax_mode);
-		$('#tab_' + target_tab_id).parent().addClass('current').siblings().removeClass('current');
 		set_cursor_position(tabs[target_tab_id].cursor_pos);
+	} else if (target_tab_id === -1) {
+		var syntax_mode = get_syntax_mode('');
+		set_editor_contents('', syntax_mode);
 	}
+	$('#tab_' + target_tab_id).parent().addClass('current').siblings().removeClass('current');
 }
 
 function get_current_tab_id () {
-	return parseInt($('#editor_tabs .current a').attr('id').substr(4), 10);
+	return parseInt($('#editor_tabs .current a.tab').attr('id').substr(4), 10);
+}
+
+// returns id of tab that should be focused if tab_id is closed
+// logic: immediate left, right if no left, -1 if neither right nor left
+function get_adjacent_tab_id (tab_id) {
+	var current_tab = $('#tab_' + tab_id).parent();
+	var adj_tab = current_tab.prev();
+	if (adj_tab.length !== 0) {
+		return parseInt(adj_tab.children('a.tab').attr('id').substr(4), 10);
+	}
+	adj_tab = current_tab.next();
+	if (adj_tab.length !== 0) {
+		return parseInt(adj_tab.children('a.tab').attr('id').substr(4), 10);
+	}
+	return -1;
 }
 
 function get_cursor_position () {
