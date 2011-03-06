@@ -115,10 +115,13 @@ a {
       color: #444;
       font-family: Verdana, sans-serif; }
       #editor_tabs ul li a.closetab:hover {
-        background-color: #ccc;
+        color: #eee;
+        background-color: #777;
         -moz-border-radius: 6px;
         -webkit-border-radius: 6px;
         border-radius: 6px; }
+    #editor_tabs ul li.current a.closetab:hover {
+      background-color: #999; }
 
 #file_drawer {
   position: absolute;

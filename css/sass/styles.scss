@@ -135,9 +135,13 @@ a {
 			color: #444;
 			font-family: Verdana, sans-serif;
 			&:hover {
-				background-color: #ccc;
+				color: #eee;
+				background-color: #777;
 				@include border_radius(6px);
 			}
+		}
+		&.current a.closetab:hover {
+			background-color: #999;
 		}
 	}
 }
